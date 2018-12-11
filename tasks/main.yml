@@ -1,0 +1,58 @@
+# see https://www.digitalocean.com/community/tutorials/how-to-host-a-website-with-caddy-on-ubuntu-16-04
+# TODO
+# - enable plugins
+# - disable telemetry
+- name: build Caddy
+  run_once: true
+  become: false
+  delegate_to: 127.0.0.1
+  block:
+    - name: get Caddy source
+      git:
+        repo: https://github.com/mholt/caddy.git
+        dest: "{{ caddy_src }}"
+        force: yes
+        version: v{{ caddy_version}}
+      register: fetch
+    - name: remove all go binaries if source changed
+      # we need to remove all go binaries as they currently share one
+      # source repo, and we need to make sure they all get rebuilt
+      # if the source changes
+      file: path={{ caddy_binary }} state=absent
+      when: fetch.changed
+    - name: check if binary exists
+      stat: path={{ caddy_binary }}
+      register: binary
+    - name: compile Caddy
+      when: not binary.stat.exists
+      shell: GOPATH={{ gopath }} go install github.com/mholt/caddy/caddy
+  rescue:
+    - name: clean Caddy binary because build failed
+      # there seems to be a bug where rescue does not use delegate_to from parent task
+      delegate_to: 127.0.0.1
+      file: path={{ caddy_binary }} state=absent
+
+- name: deploy Caddy
+  copy: src={{ caddy_binary }} dest={{ caddy_bin_dir }}/caddy mode=0755
+  notify:
+    - restart caddy
+    - enable caddy
+
+- name: Create directories
+  file: path={{ item }} state=directory owner={{ caddy_user }} mode='0770'
+  with_items:
+    - "{{ caddy_conf_dir }}"
+    - "{{ caddy_certs_dir }}"
+    - "{{ caddy_home_dir }}"
+
+# caddy_config must be defined outside this role
+- name: Create Caddyfile
+  copy: content="{{ caddy_config }}" dest="{{ caddy_conf_dir }}/Caddyfile" owner={{ caddy_user }}
+  notify: restart caddy
+
+- name: install Caddy service file
+  template: src=caddy.service.j2 dest=/etc/systemd/system/caddy.service
+  notify:
+    - reload systemd
+    - restart caddy
+    - enable caddy

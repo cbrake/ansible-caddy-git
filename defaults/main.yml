@@ -1,0 +1,10 @@
+caddy_version: 0.11.1
+gopath: "{{ playbook_dir }}/tmp/go"
+caddy_binary: "{{ gopath }}/bin/caddy"
+caddy_src: "{{ gopath }}/src/github.com/mholt/caddy"
+caddy_user: www-data
+caddy_conf_dir: /etc/caddy
+caddy_log_dir: /var/log/caddy
+caddy_certs_dir: /etc/ssl/caddy
+caddy_bin_dir: /usr/local/bin
+caddy_home_dir: /home/caddy

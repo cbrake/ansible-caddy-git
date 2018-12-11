@@ -1,0 +1,8 @@
+- name: reload systemd
+  command: systemctl daemon-reload
+
+- name: restart caddy
+  service: name=caddy state=restarted
+
+- name: enable caddy
+  service: name=caddy state=started enabled=yes
