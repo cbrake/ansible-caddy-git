@@ -23,3 +23,4 @@ for commercial projects, as the binary Caddy download requires a license.
 - [ ] configure plugins
 - [ ] test on Fedora
 - [ ] create custom caddy user instead of using www-data
+- [ ] add Vagrant tests
