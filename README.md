@@ -18,7 +18,8 @@ for commercial projects, as the binary Caddy download requires a license.
 
 ## Todo
 
-[ ] add option to disable telemetry
-[ ] configure plugins
-[ ] test on Fedora
-[ ] create custom caddy user instead of using www-data
+- [x] test on Ubuntu
+- [ ] add option to disable telemetry
+- [ ] configure plugins
+- [ ] test on Fedora
+- [ ] create custom caddy user instead of using www-data
