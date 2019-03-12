@@ -1,4 +1,4 @@
-caddy_version: 0.11.1
+caddy_version: 0.11.5
 gopath: "{{ playbook_dir }}/tmp/go"
 caddy_binary: "{{ gopath }}/bin/caddy"
 caddy_src: "{{ gopath }}/src/github.com/mholt/caddy"
