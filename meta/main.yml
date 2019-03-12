@@ -1,6 +1,7 @@
 dependencies: []
 
 galaxy_info:
+  role_name: caddy-git
   author: cbrake
   description: Recipe to install Caddy from source.
   company: "BEC Systems, LLC"
