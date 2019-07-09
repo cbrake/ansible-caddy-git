@@ -12,8 +12,8 @@ for commercial projects.
     - role: caddy-git
       caddy_config: |
         portal.simpleiot.org {
-        proxy / localhost:8080
-      }
+          proxy / localhost:8080
+        }
 ```
 
 ## Todo
