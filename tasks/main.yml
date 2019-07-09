@@ -7,25 +7,35 @@
   become: false
   delegate_to: 127.0.0.1
   block:
-    - name: get Caddy source
-      git:
-        repo: https://github.com/mholt/caddy.git
-        dest: "{{ caddy_src }}"
-        force: yes
-        version: v{{ caddy_version}}
-      register: fetch
+    - name: create build dir
+      file: path={{ caddy_build }} state=directory
+    - name: create go module
+      command: go mod init caddy
+      args:
+        chdir: "{{ caddy_build }}"
+        creates: go.mod
+    - name: populate main.go in build
+      template: src=main.go.j2 dest={{ caddy_build }}/main.go
+      register: build
+    - name: fetch caddy module
+      command: go get {{ caddy_module }}
+      when: build.changed
+      args:
+        chdir: "{{ caddy_build }}"
     - name: remove all go binaries if source changed
       # we need to remove all go binaries as they currently share one
       # source repo, and we need to make sure they all get rebuilt
       # if the source changes
       file: path={{ caddy_binary }} state=absent
-      when: fetch.changed
+      when: build.changed
     - name: check if binary exists
       stat: path={{ caddy_binary }}
       register: binary
     - name: compile Caddy
+      command: go build
       when: not binary.stat.exists
-      shell: GOPATH={{ gopath }} go install github.com/mholt/caddy/caddy
+      args:
+        chdir: "{{ caddy_build }}"
   rescue:
     - name: clean Caddy binary because build failed
       # there seems to be a bug where rescue does not use delegate_to from parent task
