@@ -1,24 +1,25 @@
 # Caddy Ansible Git
 
-This Ansible role installs [Caddy](https://caddyserver.com/) from the Caddy
-[git repo](https://github.com/mholt/caddy). This allows Caddy to be used
-for commercial projects, as the binary Caddy download requires a license.
+This Ansible role builds and installs [Caddy](https://caddyserver.com/) from
+the Caddy Go module. This allows Caddy to be used
+for commercial projects.
 
 ## Example Playbook
 
 ```
 - hosts: all
   roles:
-    - role: caddy-ansible-git
+    - role: caddy-git
       caddy_config: |
         portal.simpleiot.org {
-	  proxy / localhost:8080
-	}
+        proxy / localhost:8080
+      }
 ```
 
 ## Todo
 
 - [x] test on Ubuntu
+- [x] version number in compiled binary
 - [ ] add option to disable telemetry
 - [ ] configure plugins
 - [ ] test on Fedora
